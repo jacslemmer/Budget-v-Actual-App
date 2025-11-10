@@ -1,0 +1,27 @@
+name = "cashflow-api"
+main = "src/index.ts"
+compatibility_date = "2025-11-10"
+node_compat = true
+
+[build]
+command = "npm run build"
+
+# D1 Database (Production)
+# Uncomment and configure after creating database:
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "cashflow-prod"
+# database_id = "your-database-id"
+
+# KV Namespace for rate limiting
+# Uncomment and configure after creating KV:
+# [[kv_namespaces]]
+# binding = "KV"
+# id = "your-kv-id"
+
+[vars]
+NODE_ENV = "development"
+
+# Secrets (set via: wrangler secret put <NAME>)
+# - CLAUDE_API_KEY
+# - ENCRYPTION_KEY

@@ -1,0 +1,205 @@
+// Prisma schema for CashFlow Manager
+// Database portability: SQLite (dev) → PostgreSQL (staging) → Cloudflare D1 (prod)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite" // Change to "postgresql" for staging, or D1 adapter for production
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// CORE MODELS
+// ============================================================================
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  name         String
+  role         Role     @default(OWNER)
+  householdId  String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  accounts        Account[]
+  transactions    Transaction[]
+  categories      Category[]
+  learningRules   LearningRule[]
+  budgetPeriods   BudgetPeriod[]
+  auditLogs       AuditLog[]
+
+  @@index([householdId])
+}
+
+enum Role {
+  OWNER
+  PARTNER
+}
+
+model Account {
+  id            String      @id @default(uuid())
+  userId        String
+  bankName      BankName
+  accountType   AccountType
+  accountName   String
+  accountNumber String // Encrypted - last 4 digits only
+  currency      String      @default("ZAR")
+  isActive      Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  // Relations
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@index([userId])
+  @@index([isActive])
+}
+
+enum BankName {
+  FNB
+  NEDBANK
+}
+
+enum AccountType {
+  CHECKING
+  SAVINGS
+  CREDIT_CARD
+}
+
+model Transaction {
+  id               String          @id @default(uuid())
+  userId           String
+  accountId        String
+  date             DateTime
+  amount           Float // Decimal(10,2) in production
+  type             TransactionType
+  vendor           String
+  description      String // Encrypted
+  category         String?
+  subcategory      String?
+  source           TransactionSource
+  isRecurring      Boolean         @default(false)
+  recurringGroupId String?
+  notes            String? // Encrypted
+  confidence       Float           @default(0) // 0-1
+  verifiedAt       DateTime?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  // Relations
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  account    Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  categoryRel Category? @relation(fields: [category], references: [id])
+
+  @@index([userId])
+  @@index([accountId])
+  @@index([date])
+  @@index([category])
+  @@index([recurringGroupId])
+}
+
+enum TransactionType {
+  DEBIT
+  CREDIT
+}
+
+enum TransactionSource {
+  STATEMENT
+  POS_SCAN
+  MANUAL
+}
+
+model Category {
+  id             String   @id @default(uuid())
+  userId         String
+  name           String
+  icon           String
+  color          String
+  monthlyBudget  Float    @default(0) // Decimal(10,2) in production
+  alertThreshold Float    @default(0.8) // 0-1
+  parentCategoryId String?
+  order          Int      @default(0)
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relations
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parentCategory Category?     @relation("CategoryHierarchy", fields: [parentCategoryId], references: [id])
+  childCategories Category[]   @relation("CategoryHierarchy")
+  transactions  Transaction[]
+  budgetPeriods BudgetPeriod[]
+  learningRules LearningRule[]
+
+  @@index([userId])
+  @@index([isActive])
+  @@index([parentCategoryId])
+}
+
+model LearningRule {
+  id                 String   @id @default(uuid())
+  userId             String
+  vendorPattern      String // Regex or simple string match
+  descriptionPattern String? // Optional description pattern
+  categoryId         String
+  confidence         Float    @default(0.5) // 0-1
+  matchCount         Int      @default(0)
+  lastMatchedAt      DateTime?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  // Relations
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([categoryId])
+  @@index([vendorPattern])
+}
+
+model BudgetPeriod {
+  id           String   @id @default(uuid())
+  userId       String
+  year         Int
+  month        Int // 1-12
+  categoryId   String
+  budgetAmount Float // Decimal(10,2) in production
+  actualSpend  Float    @default(0) // Calculated from transactions
+  startDate    DateTime
+  endDate      DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, year, month, categoryId])
+  @@index([userId])
+  @@index([categoryId])
+  @@index([year, month])
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String
+  action     String
+  entityType String
+  entityId   String
+  metadata   String // JSON stored as string
+  ipAddress  String
+  userAgent  String
+  createdAt  DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([entityType, entityId])
+  @@index([action])
+  @@index([createdAt])
+}
