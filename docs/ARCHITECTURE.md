@@ -34,11 +34,11 @@ CashFlow Manager follows a modern, serverless architecture optimized for Cloudfl
      │                │
      │                │
      ▼                ▼
-┌─────────────┐  ┌──────────────────┐  ┌───────────────┐
-│   D1 (DB)   │  │  Workers KV      │  │ Anthropic API │
-│  SQLite @   │  │  Rate Limiting   │  │  Claude       │
-│  Edge       │  │  Caching         │  │  Sonnet 4.5   │
-└─────────────┘  └──────────────────┘  └───────────────┘
+┌──────────────┐  ┌──────────────────┐  ┌───────────────┐
+│  Supabase    │  │  Workers KV      │  │ Anthropic API │
+│  PostgreSQL  │  │  Rate Limiting   │  │  Claude       │
+│  (Free tier) │  │  Caching         │  │  Sonnet 4.5   │
+└──────────────┘  └──────────────────┘  └───────────────┘
 ```
 
 ## Technology Choices
@@ -55,17 +55,20 @@ CashFlow Manager follows a modern, serverless architecture optimized for Cloudfl
 - **TypeScript-first**: Excellent type inference
 - **Middleware ecosystem**: Authentication, validation, CORS
 
-### Why Prisma?
+### Why Prisma + Supabase?
 - **Type-safe**: Generated TypeScript client
-- **Multi-database**: SQLite → PostgreSQL → D1
+- **PostgreSQL**: Battle-tested, reliable database
 - **Migrations**: Version controlled schema changes
-- **Developer experience**: Prisma Studio for data viewing
+- **Developer experience**: Prisma Studio + Supabase GUI
+- **Free tier**: 500MB database (plenty for personal use)
+- **No cold starts**: Always-on PostgreSQL instance
 
 ### Why Cloudflare?
 - **Edge deployment**: Low latency worldwide
 - **Free tier**: Generous limits for personal use
-- **Integrated services**: Pages + Workers + D1 + KV
+- **Integrated services**: Pages + Workers + KV
 - **Security**: DDoS protection, SSL, CDN included
+- **Serverless**: No server management required
 
 ### Why Claude API?
 - **Vision capabilities**: Best-in-class OCR
@@ -259,8 +262,8 @@ Category 1:N Category (self-referential hierarchy)
 ### Current Limits (Free Tier)
 
 - **Workers**: 100k requests/day
-- **D1**: 5 million row reads/day
-- **KV**: 100k reads/day
+- **Supabase**: 500MB database, 2GB bandwidth/month
+- **KV**: 100k reads/day (when needed)
 - **Pages**: Unlimited requests
 
 ### Growth Strategy
@@ -273,8 +276,9 @@ Category 1:N Category (self-referential hierarchy)
 ### Bottlenecks to Monitor
 
 - Claude API costs (receipt scanning)
-- D1 write volume (statement imports)
+- Supabase connection pool (serverless)
 - Workers CPU time (PDF parsing)
+- Database size (500MB free tier limit)
 
 ## Testing Strategy
 
@@ -329,11 +333,11 @@ Done ✓
 
 **If scaling beyond personal use:**
 
-1. **Multi-region D1** (when available)
-2. **Redis for caching** (Cloudflare Workers KV → Redis)
+1. **Supabase Pro tier** (Read replicas, higher limits)
+2. **Redis for caching** (Upstash Redis or Workers KV)
 3. **Queue for heavy processing** (Cloudflare Queues)
 4. **Separate AI service** (dedicated Claude instance)
-5. **CDN for uploaded images** (Cloudflare R2)
+5. **CDN for uploaded images** (Cloudflare R2 or Supabase Storage)
 
 ---
 

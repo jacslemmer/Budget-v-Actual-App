@@ -23,7 +23,8 @@ CashFlow Manager helps you track your finances in real-time by:
 ### Backend
 - **Runtime**: Node.js (Cloudflare Workers)
 - **Framework**: Hono
-- **Database**: Prisma ORM (SQLite → PostgreSQL → Cloudflare D1)
+- **Database**: Supabase PostgreSQL (free tier - 500MB)
+- **ORM**: Prisma (type-safe database access)
 - **AI**: Anthropic Claude Sonnet 4.5 (Vision API)
 - **Deployment**: Cloudflare Pages + Workers
 
@@ -75,8 +76,9 @@ cashflow-manager/
 
 - Node.js 20+ and npm 10+
 - Git
-- Cloudflare account (for deployment)
-- Anthropic API key (for receipt scanning)
+- Supabase account (free - no credit card required)
+- Cloudflare account (for deployment - optional)
+- Anthropic API key (for receipt scanning - get later)
 
 ### Installation
 
@@ -91,19 +93,24 @@ cashflow-manager/
    npm install
    ```
 
-3. **Set up environment variables**
+3. **Set up Supabase** (see `docs/SUPABASE_SETUP.md` for detailed guide)
+   - Create free account at https://supabase.com
+   - Create new project
+   - Copy connection strings
+
+4. **Configure environment variables**
    ```bash
    cp prisma/.env.example prisma/.env
-   # Edit prisma/.env with your configuration
+   # Edit prisma/.env with your Supabase connection strings
    ```
 
-4. **Initialize database**
+5. **Initialize database**
    ```bash
    npm run db:generate
    npm run db:migrate:dev
    ```
 
-5. **Seed database with default categories**
+6. **Seed database with default categories**
    ```bash
    npx prisma db seed
    ```
@@ -254,18 +261,22 @@ npm run deploy:backend
 
 ### Database Migrations (Production)
 ```bash
-# Generate migration SQL
-npx prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script > migrations/001_initial.sql
+# Prisma handles migrations automatically with Supabase!
+# Just run:
+npx prisma migrate deploy
 
-# Apply to Cloudflare D1
-wrangler d1 execute cashflow-prod --file=migrations/001_initial.sql
+# This applies all pending migrations to your Supabase database
 ```
 
 ## Environment Variables
 
 ### Development
-```
-DATABASE_URL="file:./dev.db"
+```env
+# Supabase connection (get from https://app.supabase.com/project/_/settings/database)
+DATABASE_URL="postgresql://postgres.[PROJECT-REF]:[PASSWORD]@...pooler.supabase.com:6543/postgres?pgbouncer=true"
+DIRECT_URL="postgresql://postgres.[PROJECT-REF]:[PASSWORD]@...pooler.supabase.com:5432/postgres"
+
+# API Keys (add later)
 CLAUDE_API_KEY="sk-ant-..."
 ENCRYPTION_KEY="<32-byte-hex>"
 NODE_ENV="development"
@@ -273,9 +284,13 @@ NODE_ENV="development"
 
 ### Production (Cloudflare Secrets)
 ```bash
+wrangler secret put DATABASE_URL
+wrangler secret put DIRECT_URL
 wrangler secret put CLAUDE_API_KEY
 wrangler secret put ENCRYPTION_KEY
 ```
+
+See `docs/SUPABASE_SETUP.md` for detailed configuration guide.
 
 ## Contributing
 

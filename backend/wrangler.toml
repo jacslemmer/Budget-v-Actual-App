@@ -6,12 +6,9 @@ node_compat = true
 [build]
 command = "npm run build"
 
-# D1 Database (Production)
-# Uncomment and configure after creating database:
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "cashflow-prod"
-# database_id = "your-database-id"
+# Database: Supabase PostgreSQL
+# Connection is via environment variables (DATABASE_URL)
+# No D1 binding needed - Prisma connects directly to Supabase
 
 # KV Namespace for rate limiting
 # Uncomment and configure after creating KV:
@@ -23,5 +20,7 @@ command = "npm run build"
 NODE_ENV = "development"
 
 # Secrets (set via: wrangler secret put <NAME>)
+# - DATABASE_URL (Supabase connection string)
+# - DIRECT_URL (Supabase direct connection)
 # - CLAUDE_API_KEY
 # - ENCRYPTION_KEY

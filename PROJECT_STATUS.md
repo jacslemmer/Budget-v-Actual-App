@@ -74,7 +74,8 @@ Budget-v-Actual-App/
 - ✅ Environment setup
 
 **Database**
-- ✅ Prisma ORM
+- ✅ Supabase PostgreSQL (free tier)
+- ✅ Prisma ORM (type-safe queries)
 - ✅ Comprehensive schema (9 models)
 - ✅ Seed data with default categories
 - ✅ Migration support
@@ -151,6 +152,10 @@ Before coding features:
 
 4. **Setup Development Environment**
    - [ ] Run `npm install`
+   - [ ] **Setup Supabase** (see `docs/SUPABASE_SETUP.md`)
+     - Create free account at https://supabase.com
+     - Create new project
+     - Copy connection strings to `prisma/.env`
    - [ ] Initialize database: `npm run db:generate && npm run db:migrate:dev`
    - [ ] Seed data: `npx prisma db seed`
    - [ ] Test: `npm run dev`

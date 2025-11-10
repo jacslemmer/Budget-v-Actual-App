@@ -27,26 +27,48 @@ npm install
 
 This installs dependencies for all workspaces (frontend, backend, shared).
 
-### Step 3: Set Up Database
+### Step 3: Set Up Supabase Database
 
-1. **Copy environment file:**
+**IMPORTANT**: You need a Supabase account first! See `docs/SUPABASE_SETUP.md` for the complete guide.
+
+**Quick steps:**
+
+1. **Create Supabase account** (free, no credit card):
+   - Go to https://supabase.com
+   - Sign up with GitHub or email
+   - Create a new project
+   - Get your connection strings from Settings → Database
+
+2. **Copy environment file:**
    ```bash
    cp prisma/.env.example prisma/.env
    ```
 
-2. **Edit `.env` if needed** (defaults work for local development)
+3. **Edit `prisma/.env` with your Supabase connection strings:**
+   ```bash
+   # Use your favorite editor
+   code prisma/.env
+   # or
+   nano prisma/.env
+   ```
 
-3. **Generate Prisma client:**
+   Paste your Supabase URLs:
+   ```env
+   DATABASE_URL="postgresql://postgres.[YOUR-PROJECT]:[PASSWORD]@...6543/postgres?pgbouncer=true"
+   DIRECT_URL="postgresql://postgres.[YOUR-PROJECT]:[PASSWORD]@...5432/postgres"
+   ```
+
+4. **Generate Prisma client:**
    ```bash
    npm run db:generate
    ```
 
-4. **Create database and run migrations:**
+5. **Create database tables:**
    ```bash
    npm run db:migrate:dev
    ```
 
-5. **Seed with default categories:**
+6. **Seed with default categories:**
    ```bash
    npx prisma db seed
    ```

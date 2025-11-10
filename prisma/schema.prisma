@@ -1,13 +1,14 @@
 // Prisma schema for CashFlow Manager
-// Database portability: SQLite (dev) → PostgreSQL (staging) → Cloudflare D1 (prod)
+// Database: Supabase PostgreSQL (free tier - 500MB)
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite" // Change to "postgresql" for staging, or D1 adapter for production
+  provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL") // Optional: for Supabase connection pooling
 }
 
 // ============================================================================
