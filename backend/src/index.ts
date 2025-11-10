@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import type { Env } from './types/env';
+import categories from './routes/categories';
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -29,6 +30,8 @@ app.get('/', (c) => {
 app.get('/api/health', (c) => {
   return c.json({ status: 'ok' });
 });
+
+app.route('/api/categories', categories);
 
 // 404 handler
 app.notFound((c) => {
