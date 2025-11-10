@@ -1,7 +1,21 @@
 # Project Status - Budget vs Actual App
 
-**Last Updated**: November 10, 2025
+**Last Updated**: November 10, 2025 (Session 2)
 **GitHub**: https://github.com/jacslemmer/Budget-v-Actual-App
+
+## Session Notes
+
+### Session 2 - November 10, 2025 (Brief Check-in)
+- ✅ Resumed project successfully
+- ✅ Dev servers confirmed working (frontend: 3000, backend: 8787)
+- ✅ No code changes - ready for next development session
+- 📋 Next: Choose from Options A, B, or C below
+
+### Session 1 - November 10, 2025 (Initial Build)
+- ✅ Built complete dashboard MVP with 18 passing tests
+- ✅ Established testing infrastructure with MSW
+- ✅ Created comprehensive documentation
+- ✅ Pushed to GitHub
 
 ## Current Status: ✅ Phase 1 Complete - Dashboard MVP
 
