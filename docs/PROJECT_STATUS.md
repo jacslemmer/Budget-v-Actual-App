@@ -5,14 +5,21 @@
 
 ## Session Notes
 
-### Session 3 - November 11, 2025 (CI Fix)
-- ✅ Fixed GitHub Actions test failures
-- ✅ Configured workspace scripts to run tests from frontend directory
-- ✅ Added `test:ci` script for single-run test execution
-- ✅ Fixed TypeScript error in test setup
-- ✅ All 18 tests now passing on GitHub CI
-- **Files Modified**: `package.json`, `frontend/package.json`, `frontend/src/test/setup.ts`, `.github/workflows/ci.yml`
-- **Commit**: `fix(ci): Configure CI to run tests from frontend workspace`
+### Session 3 - November 11, 2025 (CI Fix - COMPLETE ✅)
+- ✅ Fixed GitHub Actions test failures (2 issues resolved)
+- ✅ **Issue 1**: Configured workspace scripts to run tests from frontend directory
+  - Added `test:ci` script for single-run test execution
+  - Fixed TypeScript error in test setup (removed unused import)
+  - Updated CI workflow to use `test:ci`
+- ✅ **Issue 2**: Added missing `jsdom` dependency
+  - Installed jsdom as devDependency (required by vitest environment)
+  - Fixed "MISSING DEPENDENCY Cannot find dependency 'jsdom'" error
+- ✅ **Result**: All 18 tests passing on GitHub CI
+- **Files Modified**: `package.json`, `frontend/package.json`, `frontend/src/test/setup.ts`, `.github/workflows/ci.yml`, `package-lock.json`
+- **Commits**:
+  - `fix(ci): Configure CI to run tests from frontend workspace`
+  - `fix(ci): Add missing jsdom dependency for test environment`
+- **CI Status**: ✅ PASSING (https://github.com/jacslemmer/Budget-v-Actual-App/actions/runs/19257136204)
 
 ### Session 2 - November 10, 2025 (Brief Check-in)
 - ✅ Resumed project successfully
