@@ -1,9 +1,18 @@
 # Project Status - Budget vs Actual App
 
-**Last Updated**: November 10, 2025 (Session 2)
+**Last Updated**: November 11, 2025 (Session 3)
 **GitHub**: https://github.com/jacslemmer/Budget-v-Actual-App
 
 ## Session Notes
+
+### Session 3 - November 11, 2025 (CI Fix)
+- ✅ Fixed GitHub Actions test failures
+- ✅ Configured workspace scripts to run tests from frontend directory
+- ✅ Added `test:ci` script for single-run test execution
+- ✅ Fixed TypeScript error in test setup
+- ✅ All 18 tests now passing on GitHub CI
+- **Files Modified**: `package.json`, `frontend/package.json`, `frontend/src/test/setup.ts`, `.github/workflows/ci.yml`
+- **Commit**: `fix(ci): Configure CI to run tests from frontend workspace`
 
 ### Session 2 - November 10, 2025 (Brief Check-in)
 - ✅ Resumed project successfully
